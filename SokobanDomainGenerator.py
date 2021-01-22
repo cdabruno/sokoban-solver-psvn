@@ -1,5 +1,19 @@
+
+
+
+
+
 sokobanSpace = [[0 for x in range(3)] for y in range(3)]
 transitions = list()
+lenSquared = len(sokobanSpace)*len(sokobanSpace)
+
+print("DOMAIN tile 4\n	P R W N\n\n"+str(lenSquared)+"\n")
+
+for x in range(0, lenSquared):
+    print("tile",end=" ")
+
+print("\n")
+
 
 """ 
 
@@ -9,7 +23,7 @@ W - Wall
 N - Nothing
 
 """
-"""
+
 #pushing rock right transitions
 for x in range(0, len(sokobanSpace)):
     for y in range(0, len(sokobanSpace[x])-2):
@@ -18,7 +32,7 @@ for x in range(0, len(sokobanSpace)):
 
         i = 0
 
-        while(i < 9):
+        while(i < lenSquared):
             if(not(i == index)):
                 transitionString += "- "
                 i += 1
@@ -30,7 +44,7 @@ for x in range(0, len(sokobanSpace)):
         transitionString += "=> "
         i = 0
 
-        while(i < 9):
+        while(i < lenSquared):
             if(not(i == index)):
                 transitionString += "- "
                 i += 1
@@ -52,7 +66,7 @@ for x in range(0, len(sokobanSpace)):
 
         i = 0
 
-        while(i < 9):
+        while(i < lenSquared):
             if(not(i == index)):
                 transitionString += "- "
                 i += 1
@@ -64,7 +78,7 @@ for x in range(0, len(sokobanSpace)):
         transitionString += "=> "
         i = 0
 
-        while(i < 9):
+        while(i < lenSquared):
             if(not(i == index)):
                 transitionString += "- "
                 i += 1
@@ -87,8 +101,8 @@ for x in range(0, len(sokobanSpace)-2):
 
         i = 0
 
-        #9 = map biggest line/column length squared
-        while(i < 16):
+        #lenSquared = map biggest line/column length squared
+        while(i < lenSquared):
             if(not(i == index)):
                 transitionString += "- "
                 i += 1
@@ -106,7 +120,7 @@ for x in range(0, len(sokobanSpace)-2):
         transitionString += "=> "
         i = 0
 
-        while(i < 16):
+        while(i < lenSquared):
             if(not(i == index)):
                 transitionString += "- "
                 i += 1
@@ -135,8 +149,8 @@ for x in range(0, len(sokobanSpace)-2):
 
         i = 0
 
-        #9 = map biggest line/column length squared
-        while(i < 16):
+        #lenSquared = map biggest line/column length squared
+        while(i < lenSquared):
             if(not(i == index)):
                 transitionString += "- "
                 i += 1
@@ -154,7 +168,7 @@ for x in range(0, len(sokobanSpace)-2):
         transitionString += "=> "
         i = 0
 
-        while(i < 16):
+        while(i < lenSquared):
             if(not(i == index)):
                 transitionString += "- "
                 i += 1
@@ -173,7 +187,7 @@ for x in range(0, len(sokobanSpace)-2):
 
         transitions.append(transitionString)
 
-"""
+
 
 #player only movement
 
@@ -187,19 +201,19 @@ for x in range(0, len(sokobanSpace)):
 
         i = 0
 
-        while(i < 9):
+        while(i < lenSquared):
             if(not(i == index)):
                 transitionString += "- "
                 i += 1
 
             else:
-                transitionString += "P N  "
+                transitionString += "P N "
                 i += 2
 
         transitionString += "=> "
         i = 0
 
-        while(i < 9):
+        while(i < lenSquared):
             if(not(i == index)):
                 transitionString += "- "
                 i += 1
@@ -221,7 +235,7 @@ for x in range(0, len(sokobanSpace)):
 
         i = 0
 
-        while(i < 9):
+        while(i < lenSquared):
             if(not(i == index)):
                 transitionString += "- "
                 i += 1
@@ -233,7 +247,7 @@ for x in range(0, len(sokobanSpace)):
         transitionString += "=> "
         i = 0
 
-        while(i < 9):
+        while(i < lenSquared):
             if(not(i == index)):
                 transitionString += "- "
                 i += 1
@@ -248,16 +262,16 @@ for x in range(0, len(sokobanSpace)):
 
 
 
-#pushing rock up transitions
-for x in range(0, len(sokobanSpace)-2):
+#moving up transitions
+for x in range(0, len(sokobanSpace)-1):
     for y in range(0, len(sokobanSpace[x])):
         index = x * len(sokobanSpace[0]) + y
         transitionString = ""
 
         i = 0
 
-        #9 = map biggest line/column length squared
-        while(i < 16):
+        #lenSquared = map biggest line/column length squared
+        while(i < lenSquared):
             if(not(i == index)):
                 transitionString += "- "
                 i += 1
@@ -266,46 +280,40 @@ for x in range(0, len(sokobanSpace)-2):
                 transitionString += "N "
                 for z in range(0, len(sokobanSpace)-1):
                     transitionString += "- "
-                transitionString += "R "
-                for z in range(0, len(sokobanSpace)-1):
-                    transitionString += "- "
                 transitionString += "P "
-                i += 2 * (len(sokobanSpace)-1) + 3
+                i +=  (len(sokobanSpace)-1) + 2
 
         transitionString += "=> "
         i = 0
 
-        while(i < 16):
+        while(i < lenSquared):
             if(not(i == index)):
                 transitionString += "- "
                 i += 1
 
             else:
-                transitionString += "R "
-                for z in range(0, len(sokobanSpace)-1):
-                    transitionString += "- "
                 transitionString += "P "
                 for z in range(0, len(sokobanSpace)-1):
                     transitionString += "- "
                 transitionString += "N "
-                i += 2 * (len(sokobanSpace)-1) + 3
+                i += (len(sokobanSpace)-1) + 2
 
-        transitionString += " LABEL ROCKUP"
+        transitionString += " LABEL MOVEUP"
 
         transitions.append(transitionString)
       
 
 
-#pushing rock down transitions
-for x in range(0, len(sokobanSpace)-2):
+#moving down transitions
+for x in range(0, len(sokobanSpace)-1):
     for y in range(0, len(sokobanSpace[x])):
         index = x * len(sokobanSpace[0]) + y
         transitionString = ""
 
         i = 0
 
-        #9 = map biggest line/column length squared
-        while(i < 16):
+        #lenSquared = map biggest line/column length squared
+        while(i < lenSquared):
             if(not(i == index)):
                 transitionString += "- "
                 i += 1
@@ -314,16 +322,14 @@ for x in range(0, len(sokobanSpace)-2):
                 transitionString += "P "
                 for z in range(0, len(sokobanSpace)-1):
                     transitionString += "- "
-                transitionString += "R "
-                for z in range(0, len(sokobanSpace)-1):
-                    transitionString += "- "
                 transitionString += "N "
-                i += 2 * (len(sokobanSpace)-1) + 3
+    
+                i += (len(sokobanSpace)-1) + 2
 
         transitionString += "=> "
         i = 0
 
-        while(i < 16):
+        while(i < lenSquared):
             if(not(i == index)):
                 transitionString += "- "
                 i += 1
@@ -333,12 +339,10 @@ for x in range(0, len(sokobanSpace)-2):
                 for z in range(0, len(sokobanSpace)-1):
                     transitionString += "- "
                 transitionString += "P "
-                for z in range(0, len(sokobanSpace)-1):
-                    transitionString += "- "
-                transitionString += "R "
-                i += 2 * (len(sokobanSpace)-1) + 3
 
-        transitionString += " LABEL ROCKDOWN"
+                i += (len(sokobanSpace)-1) + 2
+
+        transitionString += " LABEL MOVEDOWN"
 
         transitions.append(transitionString)
 
@@ -347,9 +351,7 @@ for x in range(0, len(sokobanSpace)-2):
 
 
 
-
-
-
-print(transitions)
+for x in transitions:
+    print(x)
 
 
