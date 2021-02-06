@@ -1,18 +1,45 @@
 
+#input map
+sokobanMap = open("sokobanTest.txt", "r").read()
+mapLines = sokobanMap.split("\n")
+maxLength = len(mapLines)
+
+for x in mapLines:
+    if len(x) > maxLength:
+        maxLength = len(x)
+
+lenSquared = maxLength * maxLength
+
+
+#defining goal state
+goalState = ""
+
+for i in range(0, maxLength):
+    for j in range(0, maxLength):
+        if i < len(mapLines):
+            if j < len(mapLines[i]):
+                if (mapLines[i][j] == "$"):
+                    goalState += "R "
+                else:
+                    goalState += "- "
+        else:
+            goalState += "- "
 
 
 
+#output domain rules
 
-sokobanSpace = [[0 for x in range(3)] for y in range(3)]
+output = open("outputDomain.psvn", "w")
+
 transitions = list()
-lenSquared = len(sokobanSpace)*len(sokobanSpace)
 
-print("DOMAIN tile 4\n	P R W N\n\n"+str(lenSquared)+"\n")
+
+output.write("DOMAIN tile 4\n	P R W N\n\n"+str(lenSquared)+"\n\n")
 
 for x in range(0, lenSquared):
-    print("tile",end=" ")
+    output.write("tile ")
 
-print("\n")
+output.write("\n\n")
 
 
 """ 
@@ -25,9 +52,9 @@ N - Nothing
 """
 
 #pushing rock right transitions
-for x in range(0, len(sokobanSpace)):
-    for y in range(0, len(sokobanSpace[x])-2):
-        index = x * len(sokobanSpace[0]) + y
+for x in range(0, maxLength):
+    for y in range(0, maxLength-2):
+        index = x * maxLength + y
         transitionString = ""
 
         i = 0
@@ -59,9 +86,9 @@ for x in range(0, len(sokobanSpace)):
 
 
 #pushing rock left transitions
-for x in range(0, len(sokobanSpace)):
-    for y in range(0, len(sokobanSpace[x])-2):
-        index = x * len(sokobanSpace[0]) + y
+for x in range(0, maxLength):
+    for y in range(0, maxLength-2):
+        index = x * maxLength + y
         transitionString = ""
 
         i = 0
@@ -94,9 +121,9 @@ for x in range(0, len(sokobanSpace)):
 
 
 #pushing rock up transitions
-for x in range(0, len(sokobanSpace)-2):
-    for y in range(0, len(sokobanSpace[x])):
-        index = x * len(sokobanSpace[0]) + y
+for x in range(0, maxLength-2):
+    for y in range(0, maxLength):
+        index = x * maxLength + y
         transitionString = ""
 
         i = 0
@@ -109,13 +136,13 @@ for x in range(0, len(sokobanSpace)-2):
 
             else:
                 transitionString += "N "
-                for z in range(0, len(sokobanSpace)-1):
+                for z in range(0, maxLength-1):
                     transitionString += "- "
                 transitionString += "R "
-                for z in range(0, len(sokobanSpace)-1):
+                for z in range(0, maxLength-1):
                     transitionString += "- "
                 transitionString += "P "
-                i += 2 * (len(sokobanSpace)-1) + 3
+                i += 2 * (maxLength-1) + 3
 
         transitionString += "=> "
         i = 0
@@ -127,13 +154,13 @@ for x in range(0, len(sokobanSpace)-2):
 
             else:
                 transitionString += "R "
-                for z in range(0, len(sokobanSpace)-1):
+                for z in range(0, maxLength-1):
                     transitionString += "- "
                 transitionString += "P "
-                for z in range(0, len(sokobanSpace)-1):
+                for z in range(0, maxLength-1):
                     transitionString += "- "
                 transitionString += "N "
-                i += 2 * (len(sokobanSpace)-1) + 3
+                i += 2 * (maxLength-1) + 3
 
         transitionString += " LABEL ROCKUP"
 
@@ -142,9 +169,9 @@ for x in range(0, len(sokobanSpace)-2):
 
 
 #pushing rock down transitions
-for x in range(0, len(sokobanSpace)-2):
-    for y in range(0, len(sokobanSpace[x])):
-        index = x * len(sokobanSpace[0]) + y
+for x in range(0, maxLength-2):
+    for y in range(0, maxLength):
+        index = x * maxLength + y
         transitionString = ""
 
         i = 0
@@ -157,13 +184,13 @@ for x in range(0, len(sokobanSpace)-2):
 
             else:
                 transitionString += "P "
-                for z in range(0, len(sokobanSpace)-1):
+                for z in range(0, maxLength-1):
                     transitionString += "- "
                 transitionString += "R "
-                for z in range(0, len(sokobanSpace)-1):
+                for z in range(0, maxLength-1):
                     transitionString += "- "
                 transitionString += "N "
-                i += 2 * (len(sokobanSpace)-1) + 3
+                i += 2 * (maxLength-1) + 3
 
         transitionString += "=> "
         i = 0
@@ -175,13 +202,13 @@ for x in range(0, len(sokobanSpace)-2):
 
             else:
                 transitionString += "N "
-                for z in range(0, len(sokobanSpace)-1):
+                for z in range(0, maxLength-1):
                     transitionString += "- "
                 transitionString += "P "
-                for z in range(0, len(sokobanSpace)-1):
+                for z in range(0, maxLength-1):
                     transitionString += "- "
                 transitionString += "R "
-                i += 2 * (len(sokobanSpace)-1) + 3
+                i += 2 * (maxLength-1) + 3
 
         transitionString += " LABEL ROCKDOWN"
 
@@ -194,9 +221,9 @@ for x in range(0, len(sokobanSpace)-2):
 
 
 #moving right transitions
-for x in range(0, len(sokobanSpace)):
-    for y in range(0, len(sokobanSpace[x])-1):
-        index = x * len(sokobanSpace[0]) + y
+for x in range(0, maxLength):
+    for y in range(0, maxLength-1):
+        index = x * maxLength + y
         transitionString = ""
 
         i = 0
@@ -228,9 +255,9 @@ for x in range(0, len(sokobanSpace)):
 
 
 #moving left transitions
-for x in range(0, len(sokobanSpace)):
-    for y in range(0, len(sokobanSpace[x])-1):
-        index = x * len(sokobanSpace[0]) + y
+for x in range(0, maxLength):
+    for y in range(0, maxLength-1):
+        index = x * maxLength + y
         transitionString = ""
 
         i = 0
@@ -263,9 +290,9 @@ for x in range(0, len(sokobanSpace)):
 
 
 #moving up transitions
-for x in range(0, len(sokobanSpace)-1):
-    for y in range(0, len(sokobanSpace[x])):
-        index = x * len(sokobanSpace[0]) + y
+for x in range(0, maxLength-1):
+    for y in range(0, maxLength):
+        index = x * maxLength + y
         transitionString = ""
 
         i = 0
@@ -278,10 +305,10 @@ for x in range(0, len(sokobanSpace)-1):
 
             else:
                 transitionString += "N "
-                for z in range(0, len(sokobanSpace)-1):
+                for z in range(0, maxLength-1):
                     transitionString += "- "
                 transitionString += "P "
-                i +=  (len(sokobanSpace)-1) + 2
+                i +=  (maxLength-1) + 2
 
         transitionString += "=> "
         i = 0
@@ -293,10 +320,10 @@ for x in range(0, len(sokobanSpace)-1):
 
             else:
                 transitionString += "P "
-                for z in range(0, len(sokobanSpace)-1):
+                for z in range(0, maxLength-1):
                     transitionString += "- "
                 transitionString += "N "
-                i += (len(sokobanSpace)-1) + 2
+                i += (maxLength-1) + 2
 
         transitionString += " LABEL MOVEUP"
 
@@ -305,9 +332,9 @@ for x in range(0, len(sokobanSpace)-1):
 
 
 #moving down transitions
-for x in range(0, len(sokobanSpace)-1):
-    for y in range(0, len(sokobanSpace[x])):
-        index = x * len(sokobanSpace[0]) + y
+for x in range(0, maxLength-1):
+    for y in range(0, maxLength):
+        index = x * maxLength + y
         transitionString = ""
 
         i = 0
@@ -320,11 +347,11 @@ for x in range(0, len(sokobanSpace)-1):
 
             else:
                 transitionString += "P "
-                for z in range(0, len(sokobanSpace)-1):
+                for z in range(0, maxLength-1):
                     transitionString += "- "
                 transitionString += "N "
     
-                i += (len(sokobanSpace)-1) + 2
+                i += (maxLength-1) + 2
 
         transitionString += "=> "
         i = 0
@@ -336,11 +363,11 @@ for x in range(0, len(sokobanSpace)-1):
 
             else:
                 transitionString += "N "
-                for z in range(0, len(sokobanSpace)-1):
+                for z in range(0, maxLength-1):
                     transitionString += "- "
                 transitionString += "P "
 
-                i += (len(sokobanSpace)-1) + 2
+                i += (maxLength-1) + 2
 
         transitionString += " LABEL MOVEDOWN"
 
@@ -352,6 +379,9 @@ for x in range(0, len(sokobanSpace)-1):
 
 
 for x in transitions:
-    print(x)
+    output.write(x+"\n")
+
+
+output.write("\n\nGOAL "+goalState)
 
 
