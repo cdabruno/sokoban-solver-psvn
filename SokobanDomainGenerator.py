@@ -22,6 +22,8 @@ for i in range(0, maxLength):
                     goalState += "R "
                 else:
                     goalState += "- "
+            else:
+                goalState += "- "
         else:
             goalState += "- "
 

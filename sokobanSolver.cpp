@@ -118,7 +118,6 @@ int search(stack<StateNode> path, unordered_set<state_t> visited, int bound){
    
 
     if(testGoal(node.data)){
-        *solutionLength = node.cost;
         return -1;
     }
 
@@ -231,6 +230,7 @@ int a_Star(state_t startState){
     //int heu;
 
     
+    
     //int i = 0;
     while(!testGoal(fringe.top().data)){
    // while(i < 5){
@@ -242,8 +242,8 @@ int a_Star(state_t startState){
 
       
 
-        //print_state(stdout, &state);
-        //printf("\n");
+        print_state(stdout, &state);
+        printf("\n");
         //heu = heuristic(state);
         //printf("%d", heu);
         //printf("\n");
@@ -263,6 +263,12 @@ int a_Star(state_t startState){
     }
 
     //std::cout << "Estados por bucket A*: " << visitedList.size() << "\n";
+
+    cout << "Estado atingido: ";
+
+    state = fringe.top().data;
+    print_state(stdout, &state);
+    printf("\n");
 
     return fringe.top().cost;
 
@@ -293,45 +299,59 @@ int main( int argc, char **argv )
     string startState = "";
     ifstream file("sokobanTest.txt");
 
-    while (getline (MyReadFile, mapa)) {
-        if(mapa.length() > maxDim){
+    int auxDim = 0;
+    while (getline (file, mapa)) {
+        if(int(mapa.length()) > maxDim){
             maxDim = mapa.length();
         }
+        auxDim++;
+    }
+    if(auxDim > maxDim){
+        maxDim = auxDim;
     }
 
     file.close();
 
-    ifstream file("sokobanTest.txt");
+    ifstream file2("sokobanTest.txt");
+    string hash = "# a";
+    string cpyright = "@";
+    string dot = ".";
+    string blank = " ";
+    string goalSymbol = "$";
 
     for(int i = 0;i < maxDim;i++){
-        if(getline(file, mapa)){
+        if(getline(file2, mapa)){
             flag = 0;
-            for(string::size_type x = 0; x < mapa.size(); x++){
-                if(!flag){
-                    if(mapa[x] != "#"){
-                        startState = startState + "W "; 
-                    }
-                    else{
-                        startState = startState + "W ";
-                        flag = 1;
-                    }
-                }
-                else{
-                    if(mapa[x] == "#"){
-                        startState = startState + "W "; 
-                        flag = 0;
-                    }
-                    else{
-                        if(mapa[x] == "@"){
-                            startState = startState + "P ";
-                        }
-                        if(mapa[x] == "."){
-                            startState = startState + "R ";
+            for(int x = 0;x < maxDim; x++){
+                if(x < int(mapa.length())){
+                    if(!flag){
+                        if(mapa[x] == hash[0]){
+                            startState = startState + "W "; 
+                            flag = 1;
                         }
                         else{
+                            startState = startState + "W ";
+                        }
+                    }
+                    else{
+                        if(mapa[x] == hash[0]){
+                            startState = startState + "W "; 
+                        }
+                        if(mapa[x] == cpyright[0]){
+                            startState = startState + "P ";
+                        }
+                        if(mapa[x] == dot[0]){
+                            startState = startState + "R ";
+                        }
+                        if(mapa[x] == blank[0]){
+                            startState = startState + "N ";
+                        }
+                        if(mapa[x] == goalSymbol[0]){
                             startState = startState + "N ";
                         }
                     }
+                }else{
+                    startState = startState + "W ";
                 }
             }
         }
@@ -343,22 +363,23 @@ int main( int argc, char **argv )
     }
 
     
-
+    const char * c = startState.c_str();
     
-            
-    read_state(startState, &state );
+    
+      
+    read_state(c, &state );
     
    
+   
 
-
-            a_Star(state);
+    a_Star(state);
           
             
-        }
-
-        cout << "sucesso";
         
-    }
+
+   
+        
+    
 
 
     return 0;
