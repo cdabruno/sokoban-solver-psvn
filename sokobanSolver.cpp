@@ -85,7 +85,12 @@ namespace std {
 
 
 int heuristic(state_t state){
-    return 1;
+	if(is_goal(&state)){
+        return 0;
+    }
+    else{
+        return 1;
+    }
 }
 
 int testGoal(state_t state){
@@ -209,9 +214,6 @@ void IDA_Star(state_t startState){
 }
 
 int a_Star(state_t startState){
-
-    
-
     priority_queue<StateNode, vector<StateNode>, Comparator> fringe;
     unordered_set<state_t> visitedList;
 
@@ -232,34 +234,29 @@ int a_Star(state_t startState){
     
     
     //int i = 0;
-    while(!testGoal(fringe.top().data)){
-   // while(i < 5){
-        //i++;
-
-
-        state = fringe.top().data;
+    while(fringe.empty() == false) {
+		StateNode node = fringe.top();
+        state = node.data;
         fringe.pop();
 
-      
+        if(is_goal(&state) == true) {
+			return node.cost;
+		}			
+			
+		if (visitedList.find(state) !=  visitedList.end()) {
+			print_state(stdout, &state);
+			printf("\n");
+			visitedList.insert(state);
+			//heu = heuristic(state);
+			//printf("%d", heu);
+			//printf("\n");
 
-        print_state(stdout, &state);
-        printf("\n");
-        //heu = heuristic(state);
-        //printf("%d", heu);
-        //printf("\n");
-
-        init_fwd_iter( &iter, &state );  // initialize the child iterator 
-        while( ( ruleid = next_ruleid( &iter ) ) >= 0 ) {
-
-	        apply_fwd_rule( ruleid, &state, &child );
-
-            
-            if(visitedList.count(child) == 0){
-                fringe.push(StateNode(child, heuristic(child), 1+fringe.top().cost));
-                visitedList.emplace(child);
-            }
-        }
-        
+			init_fwd_iter( &iter, &state );  // initialize the child iterator 
+			while( ( ruleid = next_ruleid( &iter ) ) >= 0 ) {
+				apply_fwd_rule( ruleid, &state, &child );
+				fringe.push(StateNode(child, heuristic(child), 1+fringe.top().cost));
+			}	
+		}      
     }
 
     //std::cout << "Estados por bucket A*: " << visitedList.size() << "\n";
