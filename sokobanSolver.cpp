@@ -88,19 +88,37 @@ int heuristic(state_t state){
 	if(is_goal(&state)){
         return 0;
     }
+
+    //return 1;
+    
     else{
-        return 1;
+        state_t goalState;
+        int goalNum;
+        first_goal_state(&goalState, &goalNum);
+        char stringState[MAX_LINE_LENGTH] = ""; 
+        char stringGoal[MAX_LINE_LENGTH] = "";
+
+        int heuristicValue = 0;
+
+        int stringLen = sprint_state(stringState, MAX_LINE_LENGTH, &state);
+        sprint_state(stringGoal, MAX_LINE_LENGTH, &goalState);
+        
+        for(int i = 0; i < stringLen;i+=2){
+            if(stringGoal[i] == 'R'){
+                if(stringState[i] != 'R'){
+                    heuristicValue++;
+                }
+            }
+        }
+
+        return heuristicValue;
+
+        
+
     }
 }
 
-int testGoal(state_t state){
-    if(is_goal(&state)){
-        return 1;
-    }
-    else{
-        return 0;
-    }
-}
+
 
 
 
@@ -122,7 +140,7 @@ int search(stack<StateNode> path, unordered_set<state_t> visited, int bound){
 
    
 
-    if(testGoal(node.data)){
+    if(is_goal(&(node.data))){
         return -1;
     }
 
@@ -221,7 +239,7 @@ int a_Star(state_t startState){
     fringe.push(StateNode(startState, heuristic(startState), 0));
 
     //new visited list
-    visitedList.emplace(startState);
+    //visitedList.emplace(startState);
 
     state_t state;
     // VARIABLES FOR ITERATING THROUGH state's SUCCESSORS
@@ -240,12 +258,16 @@ int a_Star(state_t startState){
         fringe.pop();
 
         if(is_goal(&state) == true) {
-			return node.cost;
+            cout << "Estado atingido: ";
+			print_state(stdout, &state);
+            return node.cost;
 		}			
 			
-		if (visitedList.find(state) !=  visitedList.end()) {
-			print_state(stdout, &state);
-			printf("\n");
+		if (visitedList.find(state) == visitedList.end()) {
+            
+            print_state(stdout, &state);
+            cout << "\n";
+
 			visitedList.insert(state);
 			//heu = heuristic(state);
 			//printf("%d", heu);
@@ -254,20 +276,17 @@ int a_Star(state_t startState){
 			init_fwd_iter( &iter, &state );  // initialize the child iterator 
 			while( ( ruleid = next_ruleid( &iter ) ) >= 0 ) {
 				apply_fwd_rule( ruleid, &state, &child );
-				fringe.push(StateNode(child, heuristic(child), 1+fringe.top().cost));
+				fringe.push(StateNode(child, heuristic(child), get_fwd_rule_cost(ruleid)+fringe.top().cost));
 			}	
 		}      
     }
 
     //std::cout << "Estados por bucket A*: " << visitedList.size() << "\n";
 
-    cout << "Estado atingido: ";
-
-    state = fringe.top().data;
-    print_state(stdout, &state);
+    //print_state(stdout, &state);
     printf("\n");
 
-    return fringe.top().cost;
+    return -1;
 
 }
 
@@ -310,11 +329,13 @@ int main( int argc, char **argv )
     file.close();
 
     ifstream file2("sokobanTest.txt");
-    string hash = "# a";
+    string hash = "#";
     string cpyright = "@";
     string dot = ".";
     string blank = " ";
     string goalSymbol = "$";
+    string plusSign = "+";
+    string starSign = "*";
 
     for(int i = 0;i < maxDim;i++){
         if(getline(file2, mapa)){
@@ -346,6 +367,12 @@ int main( int argc, char **argv )
                         if(mapa[x] == goalSymbol[0]){
                             startState = startState + "N ";
                         }
+                        if(mapa[x] == plusSign[0]){
+                            startState = startState + "P ";
+                        }
+                        if(mapa[x] == starSign[0]){
+                            startState = startState + "R ";
+                        }
                     }
                 }else{
                     startState = startState + "W ";
@@ -365,6 +392,12 @@ int main( int argc, char **argv )
     
       
     read_state(c, &state );
+
+    cout << "Estado inicial: ";
+
+    print_state(stdout, &state);
+
+    cout << "\n";
     
    
    
