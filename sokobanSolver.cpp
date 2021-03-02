@@ -22,12 +22,14 @@ struct StateNode{
     state_t data;
     int hValue;
     int cost;
+    string path;
 
     public:
-        StateNode(state_t st, int hV, int c){
+        StateNode(state_t st, int hV, int c, string p){
             data = st;
             hValue = hV;
             cost = c;
+            path = p;
         }
 
 };
@@ -89,8 +91,11 @@ int heuristic(state_t state){
         return 0;
     }
 
-    //return 1;
-    
+    //blind
+    //return 1; 
+
+
+    //goal count
     else{
         state_t goalState;
         int goalNum;
@@ -167,7 +172,7 @@ int search(stack<StateNode> path, unordered_set<state_t> visited, int bound){
         priority_queue<StateNode, vector<StateNode>, Comparator2> auxQueue;
         
         if(visited.count(child) == 0){
-            auxQueue.push(StateNode(child, heuristic(child), 1+ node.cost));
+            auxQueue.push(StateNode(child, heuristic(child), 1+ node.cost, node.path+" "+get_fwd_rule_label(ruleid)));
             visited.insert(child);
         }
         //print_state(stdout, &child);
@@ -205,7 +210,7 @@ void IDA_Star(state_t startState){
     
     int bound = heuristic(startState);
 
-    path.push(StateNode(startState, bound, 0));
+    path.push(StateNode(startState, bound, 0, ""));
     visitedList.emplace(startState);
 
     while(true){
@@ -236,7 +241,7 @@ int a_Star(state_t startState){
     unordered_set<state_t> visitedList;
 
     //starting fringe with start state
-    fringe.push(StateNode(startState, heuristic(startState), 0));
+    fringe.push(StateNode(startState, heuristic(startState), 0, ""));
 
     //new visited list
     //visitedList.emplace(startState);
@@ -255,11 +260,12 @@ int a_Star(state_t startState){
     while(fringe.empty() == false) {
 		StateNode node = fringe.top();
         state = node.data;
+        string auxPath = node.path;
         fringe.pop();
 
         if(is_goal(&state) == true) {
-            cout << "Estado atingido: ";
-			print_state(stdout, &state);
+            cout << "Passos: ";
+			cout << auxPath;
             return node.cost;
 		}			
 			
@@ -276,7 +282,7 @@ int a_Star(state_t startState){
 			init_fwd_iter( &iter, &state );  // initialize the child iterator 
 			while( ( ruleid = next_ruleid( &iter ) ) >= 0 ) {
 				apply_fwd_rule( ruleid, &state, &child );
-				fringe.push(StateNode(child, heuristic(child), get_fwd_rule_cost(ruleid)+fringe.top().cost));
+				fringe.push(StateNode(child, heuristic(child), get_fwd_rule_cost(ruleid)+fringe.top().cost, auxPath+" "+get_fwd_rule_label(ruleid)));
 			}	
 		}      
     }
@@ -402,7 +408,9 @@ int main( int argc, char **argv )
    
    
 
-    a_Star(state);
+    if(a_Star(state) == -1){
+        cout << "Sem solução.";
+    }
           
             
         
