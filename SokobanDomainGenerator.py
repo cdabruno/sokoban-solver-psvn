@@ -14,18 +14,25 @@ lenSquared = maxLength * maxLength
 #defining goal state
 goalState = ""
 
+invalidTiles = list()
+
 for i in range(0, maxLength):
     for j in range(0, maxLength):
         if i < len(mapLines):
             if j < len(mapLines[i]):
                 if (mapLines[i][j] == "$"):
                     goalState += "R "
+                elif (mapLines[i][j] == "#"):
+                    goalState += "- "
+                    invalidTiles.append((i,j))
                 else:
                     goalState += "- "
             else:
                 goalState += "- "
+                invalidTiles.append((i,j))
         else:
             goalState += "- "
+            invalidTiles.append((i,j))
 
 
 
@@ -56,165 +63,172 @@ N - Nothing
 #pushing rock right transitions
 for x in range(0, maxLength):
     for y in range(0, maxLength-2):
-        index = x * maxLength + y
-        transitionString = ""
 
-        i = 0
+        if(not((x,y) in invalidTiles) and not((x,y+1) in invalidTiles) and not((x,y+2) in invalidTiles)):
+            index = x * maxLength + y
+            transitionString = ""
 
-        while(i < lenSquared):
-            if(not(i == index)):
-                transitionString += "- "
-                i += 1
+            i = 0
 
-            else:
-                transitionString += "P R N "
-                i += 3
+            while(i < lenSquared):
+                if(not(i == index)):
+                    transitionString += "- "
+                    i += 1
 
-        transitionString += "=> "
-        i = 0
+                else:
+                    transitionString += "P R N "
+                    i += 3
 
-        while(i < lenSquared):
-            if(not(i == index)):
-                transitionString += "- "
-                i += 1
+            transitionString += "=> "
+            i = 0
 
-            else:
-                transitionString += "N P R "
-                i += 3
+            while(i < lenSquared):
+                if(not(i == index)):
+                    transitionString += "- "
+                    i += 1
 
-        transitionString += " LABEL ROCKRIGHT"
+                else:
+                    transitionString += "N P R "
+                    i += 3
 
-        transitions.append(transitionString)
+            transitionString += " LABEL ROCKRIGHT"
+
+            transitions.append(transitionString)
 
 
 #pushing rock left transitions
 for x in range(0, maxLength):
     for y in range(0, maxLength-2):
-        index = x * maxLength + y
-        transitionString = ""
 
-        i = 0
+        if(not((x,y) in invalidTiles) and not((x,y+1) in invalidTiles) and not((x,y+2) in invalidTiles)):
+            index = x * maxLength + y
+            transitionString = ""
 
-        while(i < lenSquared):
-            if(not(i == index)):
-                transitionString += "- "
-                i += 1
+            i = 0
 
-            else:
-                transitionString += "N R P "
-                i += 3
+            while(i < lenSquared):
+                if(not(i == index)):
+                    transitionString += "- "
+                    i += 1
 
-        transitionString += "=> "
-        i = 0
+                else:
+                    transitionString += "N R P "
+                    i += 3
 
-        while(i < lenSquared):
-            if(not(i == index)):
-                transitionString += "- "
-                i += 1
+            transitionString += "=> "
+            i = 0
 
-            else:
-                transitionString += "R P N "
-                i += 3
+            while(i < lenSquared):
+                if(not(i == index)):
+                    transitionString += "- "
+                    i += 1
 
-        transitionString += " LABEL ROCKLEFT"
+                else:
+                    transitionString += "R P N "
+                    i += 3
 
-        transitions.append(transitionString)
+            transitionString += " LABEL ROCKLEFT"
+
+            transitions.append(transitionString)
 
 
 
 #pushing rock up transitions
 for x in range(0, maxLength-2):
     for y in range(0, maxLength):
-        index = x * maxLength + y
-        transitionString = ""
 
-        i = 0
+        if(not((x,y) in invalidTiles) and not((x+1,y) in invalidTiles) and not((x+2,y) in invalidTiles)):
+            index = x * maxLength + y
+            transitionString = ""
 
-        #lenSquared = map biggest line/column length squared
-        while(i < lenSquared):
-            if(not(i == index)):
-                transitionString += "- "
-                i += 1
+            i = 0
 
-            else:
-                transitionString += "N "
-                for z in range(0, maxLength-1):
+            #lenSquared = map biggest line/column length squared
+            while(i < lenSquared):
+                if(not(i == index)):
                     transitionString += "- "
-                transitionString += "R "
-                for z in range(0, maxLength-1):
+                    i += 1
+
+                else:
+                    transitionString += "N "
+                    for z in range(0, maxLength-1):
+                        transitionString += "- "
+                    transitionString += "R "
+                    for z in range(0, maxLength-1):
+                        transitionString += "- "
+                    transitionString += "P "
+                    i += 2 * (maxLength-1) + 3
+
+            transitionString += "=> "
+            i = 0
+
+            while(i < lenSquared):
+                if(not(i == index)):
                     transitionString += "- "
-                transitionString += "P "
-                i += 2 * (maxLength-1) + 3
+                    i += 1
 
-        transitionString += "=> "
-        i = 0
+                else:
+                    transitionString += "R "
+                    for z in range(0, maxLength-1):
+                        transitionString += "- "
+                    transitionString += "P "
+                    for z in range(0, maxLength-1):
+                        transitionString += "- "
+                    transitionString += "N "
+                    i += 2 * (maxLength-1) + 3
 
-        while(i < lenSquared):
-            if(not(i == index)):
-                transitionString += "- "
-                i += 1
+            transitionString += " LABEL ROCKUP"
 
-            else:
-                transitionString += "R "
-                for z in range(0, maxLength-1):
-                    transitionString += "- "
-                transitionString += "P "
-                for z in range(0, maxLength-1):
-                    transitionString += "- "
-                transitionString += "N "
-                i += 2 * (maxLength-1) + 3
-
-        transitionString += " LABEL ROCKUP"
-
-        transitions.append(transitionString)
+            transitions.append(transitionString)
       
 
 
 #pushing rock down transitions
 for x in range(0, maxLength-2):
     for y in range(0, maxLength):
-        index = x * maxLength + y
-        transitionString = ""
+        if(not((x,y) in invalidTiles) and not((x+1,y) in invalidTiles) and not((x+2,y) in invalidTiles)):
+            index = x * maxLength + y
+            transitionString = ""
 
-        i = 0
+            i = 0
 
-        #lenSquared = map biggest line/column length squared
-        while(i < lenSquared):
-            if(not(i == index)):
-                transitionString += "- "
-                i += 1
-
-            else:
-                transitionString += "P "
-                for z in range(0, maxLength-1):
+            #lenSquared = map biggest line/column length squared
+            while(i < lenSquared):
+                if(not(i == index)):
                     transitionString += "- "
-                transitionString += "R "
-                for z in range(0, maxLength-1):
+                    i += 1
+
+                else:
+                    transitionString += "P "
+                    for z in range(0, maxLength-1):
+                        transitionString += "- "
+                    transitionString += "R "
+                    for z in range(0, maxLength-1):
+                        transitionString += "- "
+                    transitionString += "N "
+                    i += 2 * (maxLength-1) + 3
+
+            transitionString += "=> "
+            i = 0
+
+            while(i < lenSquared):
+                if(not(i == index)):
                     transitionString += "- "
-                transitionString += "N "
-                i += 2 * (maxLength-1) + 3
+                    i += 1
 
-        transitionString += "=> "
-        i = 0
+                else:
+                    transitionString += "N "
+                    for z in range(0, maxLength-1):
+                        transitionString += "- "
+                    transitionString += "P "
+                    for z in range(0, maxLength-1):
+                        transitionString += "- "
+                    transitionString += "R "
+                    i += 2 * (maxLength-1) + 3
 
-        while(i < lenSquared):
-            if(not(i == index)):
-                transitionString += "- "
-                i += 1
+            transitionString += " LABEL ROCKDOWN"
 
-            else:
-                transitionString += "N "
-                for z in range(0, maxLength-1):
-                    transitionString += "- "
-                transitionString += "P "
-                for z in range(0, maxLength-1):
-                    transitionString += "- "
-                transitionString += "R "
-                i += 2 * (maxLength-1) + 3
-
-        transitionString += " LABEL ROCKDOWN"
-
-        transitions.append(transitionString)
+            transitions.append(transitionString)
 
 
 
@@ -225,155 +239,159 @@ for x in range(0, maxLength-2):
 #moving right transitions
 for x in range(0, maxLength):
     for y in range(0, maxLength-1):
-        index = x * maxLength + y
-        transitionString = ""
+        if(not((x,y) in invalidTiles) and not((x,y+1) in invalidTiles)):
+            index = x * maxLength + y
+            transitionString = ""
 
-        i = 0
+            i = 0
 
-        while(i < lenSquared):
-            if(not(i == index)):
-                transitionString += "- "
-                i += 1
+            while(i < lenSquared):
+                if(not(i == index)):
+                    transitionString += "- "
+                    i += 1
 
-            else:
-                transitionString += "P N "
-                i += 2
+                else:
+                    transitionString += "P N "
+                    i += 2
 
-        transitionString += "=> "
-        i = 0
+            transitionString += "=> "
+            i = 0
 
-        while(i < lenSquared):
-            if(not(i == index)):
-                transitionString += "- "
-                i += 1
+            while(i < lenSquared):
+                if(not(i == index)):
+                    transitionString += "- "
+                    i += 1
 
-            else:
-                transitionString += "N P "
-                i += 2
+                else:
+                    transitionString += "N P "
+                    i += 2
 
-        transitionString += " LABEL MOVERIGHT"
+            transitionString += " LABEL MOVERIGHT"
 
-        transitions.append(transitionString)
+            transitions.append(transitionString)
 
 
 #moving left transitions
 for x in range(0, maxLength):
     for y in range(0, maxLength-1):
-        index = x * maxLength + y
-        transitionString = ""
+        if(not((x,y) in invalidTiles) and not((x,y+1) in invalidTiles)):
+            index = x * maxLength + y
+            transitionString = ""
 
-        i = 0
+            i = 0
 
-        while(i < lenSquared):
-            if(not(i == index)):
-                transitionString += "- "
-                i += 1
+            while(i < lenSquared):
+                if(not(i == index)):
+                    transitionString += "- "
+                    i += 1
 
-            else:
-                transitionString += "N P "
-                i += 2
+                else:
+                    transitionString += "N P "
+                    i += 2
 
-        transitionString += "=> "
-        i = 0
+            transitionString += "=> "
+            i = 0
 
-        while(i < lenSquared):
-            if(not(i == index)):
-                transitionString += "- "
-                i += 1
+            while(i < lenSquared):
+                if(not(i == index)):
+                    transitionString += "- "
+                    i += 1
 
-            else:
-                transitionString += "P N "
-                i += 2
+                else:
+                    transitionString += "P N "
+                    i += 2
 
-        transitionString += " LABEL MOVELEFT"
+            transitionString += " LABEL MOVELEFT"
 
-        transitions.append(transitionString)
+            transitions.append(transitionString)
 
 
 
 #moving up transitions
 for x in range(0, maxLength-1):
     for y in range(0, maxLength):
-        index = x * maxLength + y
-        transitionString = ""
+        if(not((x,y) in invalidTiles) and not((x+1,y) in invalidTiles)):
+            index = x * maxLength + y
+            transitionString = ""
 
-        i = 0
+            i = 0
 
-        #lenSquared = map biggest line/column length squared
-        while(i < lenSquared):
-            if(not(i == index)):
-                transitionString += "- "
-                i += 1
-
-            else:
-                transitionString += "N "
-                for z in range(0, maxLength-1):
+            #lenSquared = map biggest line/column length squared
+            while(i < lenSquared):
+                if(not(i == index)):
                     transitionString += "- "
-                transitionString += "P "
-                i +=  (maxLength-1) + 2
+                    i += 1
 
-        transitionString += "=> "
-        i = 0
+                else:
+                    transitionString += "N "
+                    for z in range(0, maxLength-1):
+                        transitionString += "- "
+                    transitionString += "P "
+                    i +=  (maxLength-1) + 2
 
-        while(i < lenSquared):
-            if(not(i == index)):
-                transitionString += "- "
-                i += 1
+            transitionString += "=> "
+            i = 0
 
-            else:
-                transitionString += "P "
-                for z in range(0, maxLength-1):
+            while(i < lenSquared):
+                if(not(i == index)):
                     transitionString += "- "
-                transitionString += "N "
-                i += (maxLength-1) + 2
+                    i += 1
 
-        transitionString += " LABEL MOVEUP"
+                else:
+                    transitionString += "P "
+                    for z in range(0, maxLength-1):
+                        transitionString += "- "
+                    transitionString += "N "
+                    i += (maxLength-1) + 2
 
-        transitions.append(transitionString)
+            transitionString += " LABEL MOVEUP"
+
+            transitions.append(transitionString)
       
 
 
 #moving down transitions
 for x in range(0, maxLength-1):
     for y in range(0, maxLength):
-        index = x * maxLength + y
-        transitionString = ""
+        if(not((x,y) in invalidTiles) and not((x+1,y) in invalidTiles)):
+            index = x * maxLength + y
+            transitionString = ""
 
-        i = 0
+            i = 0
 
-        #lenSquared = map biggest line/column length squared
-        while(i < lenSquared):
-            if(not(i == index)):
-                transitionString += "- "
-                i += 1
-
-            else:
-                transitionString += "P "
-                for z in range(0, maxLength-1):
+            #lenSquared = map biggest line/column length squared
+            while(i < lenSquared):
+                if(not(i == index)):
                     transitionString += "- "
-                transitionString += "N "
-    
-                i += (maxLength-1) + 2
+                    i += 1
 
-        transitionString += "=> "
-        i = 0
+                else:
+                    transitionString += "P "
+                    for z in range(0, maxLength-1):
+                        transitionString += "- "
+                    transitionString += "N "
+        
+                    i += (maxLength-1) + 2
 
-        while(i < lenSquared):
-            if(not(i == index)):
-                transitionString += "- "
-                i += 1
+            transitionString += "=> "
+            i = 0
 
-            else:
-                transitionString += "N "
-                for z in range(0, maxLength-1):
+            while(i < lenSquared):
+                if(not(i == index)):
                     transitionString += "- "
-                transitionString += "P "
+                    i += 1
 
-                i += (maxLength-1) + 2
+                else:
+                    transitionString += "N "
+                    for z in range(0, maxLength-1):
+                        transitionString += "- "
+                    transitionString += "P "
 
-        transitionString += " LABEL MOVEDOWN"
+                    i += (maxLength-1) + 2
 
-        transitions.append(transitionString)
+            transitionString += " LABEL MOVEDOWN"
+
+            transitions.append(transitionString)
 
 
 
@@ -385,5 +403,4 @@ for x in transitions:
 
 
 output.write("\n\nGOAL "+goalState)
-
 
