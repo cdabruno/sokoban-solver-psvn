@@ -20,7 +20,11 @@ for i in range(0, maxLength):
     for j in range(0, maxLength):
         if i < len(mapLines):
             if j < len(mapLines[i]):
-                if (mapLines[i][j] == "$"):
+                if (mapLines[i][j] == "."):
+                    goalState += "R "
+                elif (mapLines[i][j] == "+"):
+                    goalState += "R "
+                elif (mapLines[i][j] == "*"):
                     goalState += "R "
                 elif (mapLines[i][j] == "#"):
                     goalState += "- "
@@ -91,7 +95,7 @@ for x in range(0, maxLength):
                     transitionString += "N P R "
                     i += 3
 
-            transitionString += " LABEL ROCKRIGHT"
+            transitionString += " LABEL ROCKRIGHT COST 1"
 
             transitions.append(transitionString)
 
@@ -127,7 +131,7 @@ for x in range(0, maxLength):
                     transitionString += "R P N "
                     i += 3
 
-            transitionString += " LABEL ROCKLEFT"
+            transitionString += " LABEL ROCKLEFT COST 1"
 
             transitions.append(transitionString)
 
@@ -177,7 +181,7 @@ for x in range(0, maxLength-2):
                     transitionString += "N "
                     i += 2 * (maxLength-1) + 3
 
-            transitionString += " LABEL ROCKUP"
+            transitionString += " LABEL ROCKUP COST 1"
 
             transitions.append(transitionString)
       
@@ -226,7 +230,7 @@ for x in range(0, maxLength-2):
                     transitionString += "R "
                     i += 2 * (maxLength-1) + 3
 
-            transitionString += " LABEL ROCKDOWN"
+            transitionString += " LABEL ROCKDOWN COST 1"
 
             transitions.append(transitionString)
 
@@ -266,7 +270,7 @@ for x in range(0, maxLength):
                     transitionString += "N P "
                     i += 2
 
-            transitionString += " LABEL MOVERIGHT"
+            transitionString += " LABEL MOVERIGHT COST 0"
 
             transitions.append(transitionString)
 
@@ -301,7 +305,7 @@ for x in range(0, maxLength):
                     transitionString += "P N "
                     i += 2
 
-            transitionString += " LABEL MOVELEFT"
+            transitionString += " LABEL MOVELEFT COST 0"
 
             transitions.append(transitionString)
 
@@ -344,7 +348,7 @@ for x in range(0, maxLength-1):
                     transitionString += "N "
                     i += (maxLength-1) + 2
 
-            transitionString += " LABEL MOVEUP"
+            transitionString += " LABEL MOVEUP COST 0"
 
             transitions.append(transitionString)
       
@@ -389,7 +393,7 @@ for x in range(0, maxLength-1):
 
                     i += (maxLength-1) + 2
 
-            transitionString += " LABEL MOVEDOWN"
+            transitionString += " LABEL MOVEDOWN COST 0"
 
             transitions.append(transitionString)
 
