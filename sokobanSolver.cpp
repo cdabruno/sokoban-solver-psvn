@@ -10,6 +10,8 @@ Copyright (C) 2013 by the PSVN Research Group, University of Alberta
 #include <climits>
 #include <fstream>
 #include <iostream>
+#include <ctime>
+#include <string.h>
 
 #define  MAX_LINE_LENGTH 999 
 #define HAVE_BWD_MOVES
@@ -84,18 +86,17 @@ namespace std {
 
 
 
+// if flagHeuristic == 1: goal count
+// else: blind
 
-
-int heuristic(state_t state){
+int heuristic(state_t state, int flagHeuristic){
 	if(is_goal(&state)){
         return 0;
     }
 
-    //blind
-    //return 1; 
-
-
-    //goal count
+    if(!(flagHeuristic == 1)){
+        return 1;
+    }
     else{
         state_t goalState;
         int goalNum;
@@ -117,10 +118,9 @@ int heuristic(state_t state){
         }
 
         return heuristicValue;
-
-        
-
     }
+
+
 }
 
 
@@ -129,7 +129,8 @@ int heuristic(state_t state){
 
 
 
-int search(stack<StateNode> path, unordered_set<state_t> visited, int bound){
+
+int search(stack<StateNode> path, unordered_set<state_t> visited, int bound, int flagHeuristic){
     StateNode node = path.top();
     
 
@@ -172,14 +173,14 @@ int search(stack<StateNode> path, unordered_set<state_t> visited, int bound){
         priority_queue<StateNode, vector<StateNode>, Comparator2> auxQueue;
         
         if(visited.count(child) == 0){
-            auxQueue.push(StateNode(child, heuristic(child), 1+ node.cost, node.path+" "+get_fwd_rule_label(ruleid)));
+            auxQueue.push(StateNode(child, heuristic(child, flagHeuristic), 1+ node.cost, node.path+" "+get_fwd_rule_label(ruleid)));
             visited.insert(child);
         }
         //print_state(stdout, &child);
         //printf("\n");
         while(!auxQueue.empty()){
             path.push(auxQueue.top());
-            aux = search(path, visited, bound);
+            aux = search(path, visited, bound, flagHeuristic);
 
             if(aux == -1){
                 return -1;
@@ -200,7 +201,7 @@ int search(stack<StateNode> path, unordered_set<state_t> visited, int bound){
 
 }
 
-void IDA_Star(state_t startState){
+void IDA_Star(state_t startState, int flagHeuristic){
     
 
     stack<StateNode> path;
@@ -208,7 +209,7 @@ void IDA_Star(state_t startState){
 
     //cost
     
-    int bound = heuristic(startState);
+    int bound = heuristic(startState, flagHeuristic);
 
     path.push(StateNode(startState, bound, 0, ""));
     visitedList.emplace(startState);
@@ -218,7 +219,7 @@ void IDA_Star(state_t startState){
   
         //std::cout << " bound " << bound << "\n";
 
-        int aux = search(path, visitedList, bound);
+        int aux = search(path, visitedList, bound, flagHeuristic);
         
         if (aux == -1){
             break;
@@ -236,12 +237,14 @@ void IDA_Star(state_t startState){
     //std::cout << "Estados por bucket IDA*: " << visitedList.size()  << "\n";
 }
 
-int a_Star(state_t startState){
+int a_Star(state_t startState, int flagHeuristic, int *nodesExpanded){
     priority_queue<StateNode, vector<StateNode>, Comparator> fringe;
     unordered_set<state_t> visitedList;
 
     //starting fringe with start state
-    fringe.push(StateNode(startState, heuristic(startState), 0, ""));
+    fringe.push(StateNode(startState, heuristic(startState, flagHeuristic), 0, ""));
+
+    *nodesExpanded = 1;
 
     //new visited list
     //visitedList.emplace(startState);
@@ -254,25 +257,33 @@ int a_Star(state_t startState){
     //int childCount;
     //int heu;
 
-    
+    int i = 0;
     
     //int i = 0;
     while(fringe.empty() == false) {
+        i++;
+
+        if(i>10000){
+            break;
+        }
+
 		StateNode node = fringe.top();
         state = node.data;
         string auxPath = node.path;
+        int auxCost = fringe.top().cost;
         fringe.pop();
+
+        *nodesExpanded = *nodesExpanded + 1;
 
         if(is_goal(&state) == true) {
             cout << "Passos: ";
 			cout << auxPath;
-            return node.cost;
+            return auxCost;
 		}			
 			
 		if (visitedList.find(state) == visitedList.end()) {
             
-            print_state(stdout, &state);
-            cout << "\n";
+           
 
 			visitedList.insert(state);
 			//heu = heuristic(state);
@@ -282,7 +293,7 @@ int a_Star(state_t startState){
 			init_fwd_iter( &iter, &state );  // initialize the child iterator 
 			while( ( ruleid = next_ruleid( &iter ) ) >= 0 ) {
 				apply_fwd_rule( ruleid, &state, &child );
-				fringe.push(StateNode(child, heuristic(child), get_fwd_rule_cost(ruleid)+fringe.top().cost, auxPath+" "+get_fwd_rule_label(ruleid)));
+				fringe.push(StateNode(child, heuristic(child, flagHeuristic), get_fwd_rule_cost(ruleid)+auxCost, auxPath+" "+get_fwd_rule_label(ruleid)));
 			}	
 		}      
     }
@@ -304,7 +315,15 @@ int main( int argc, char **argv )
     int bwdruleid ; // an iterator returns a number identifying a rule
   
 
+    int flagHeuristic = 0;
+
     state_t child;
+
+    if(argc > 1){
+        if(strcmp(argv[1], "goalCount") == 0){
+            flagHeuristic = 1;
+        }
+    }
 
 
 // VARIABLES FOR INPUT
@@ -317,9 +336,11 @@ int main( int argc, char **argv )
     int flag = 0;
     int maxDim = 0;
 
+
+// DEFINING INITIAL STATE
     string mapa;
     string startState = "";
-    ifstream file("sokobanTest.txt");
+    ifstream file("sokobanLevel.txt");
 
     int auxDim = 0;
     while (getline (file, mapa)) {
@@ -334,12 +355,12 @@ int main( int argc, char **argv )
 
     file.close();
 
-    ifstream file2("sokobanTest.txt");
+    ifstream file2("sokobanLevel.txt");
     string hash = "#";
     string cpyright = "@";
     string dot = ".";
     string blank = " ";
-    string goalSymbol = "$";
+    string dollarSign = "$";
     string plusSign = "+";
     string starSign = "*";
 
@@ -364,13 +385,13 @@ int main( int argc, char **argv )
                         if(mapa[x] == cpyright[0]){
                             startState = startState + "P ";
                         }
-                        if(mapa[x] == dot[0]){
+                        if(mapa[x] == dollarSign[0]){
                             startState = startState + "R ";
                         }
                         if(mapa[x] == blank[0]){
                             startState = startState + "N ";
                         }
-                        if(mapa[x] == goalSymbol[0]){
+                        if(mapa[x] == dot[0]){
                             startState = startState + "N ";
                         }
                         if(mapa[x] == plusSign[0]){
@@ -399,18 +420,30 @@ int main( int argc, char **argv )
       
     read_state(c, &state );
 
-    cout << "Estado inicial: ";
+    //cout << "Estado inicial: ";
 
-    print_state(stdout, &state);
+    //print_state(stdout, &state);
 
-    cout << "\n";
+    //cout << "\n";
+
+    int nodesExpanded;
     
    
-   
+    clock_t begin = clock();
 
-    if(a_Star(state) == -1){
-        cout << "Sem solução.";
+    int result = a_Star(state, flagHeuristic, &nodesExpanded);
+
+    clock_t end = clock();
+
+    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+
+    if(result == -1){
+        cout << "Sem solução.\nNodos expandidos: " << nodesExpanded << "\nTempo decorrido: " << elapsed_secs << "\n\n";
     }
+    else{
+        cout << "Solução encontrada!\nCusto: " << result << "\nNodos expandidos: " << nodesExpanded << "\nTempo decorrido: " << elapsed_secs << "\n\n";
+    }
+
           
             
         

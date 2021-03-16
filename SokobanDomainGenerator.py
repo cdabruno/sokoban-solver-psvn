@@ -1,6 +1,6 @@
 
 #input map
-sokobanMap = open("sokobanTest.txt", "r").read()
+sokobanMap = open("sokobanLevel.txt", "r").read()
 mapLines = sokobanMap.split("\n")
 maxLength = len(mapLines)
 
