@@ -263,9 +263,7 @@ int a_Star(state_t startState, int flagHeuristic, int *nodesExpanded){
     while(fringe.empty() == false) {
         i++;
 
-        if(i>10000){
-            return -1;
-        }
+        
 
 		StateNode node = fringe.top();
         state = node.data;
