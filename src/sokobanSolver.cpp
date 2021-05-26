@@ -89,7 +89,7 @@ namespace std {
 // if flagHeuristic == 1: goal count
 // else: blind
 
-int heuristic(state_t state, int flagHeuristic){
+int heuristic(state_t state, int flagHeuristic, int goalVector[], int goalIndex){
 	if(is_goal(&state)){
         return 0;
     }
@@ -98,25 +98,24 @@ int heuristic(state_t state, int flagHeuristic){
         return 1;
     }
     else{
-        state_t goalState;
-        int goalNum;
-        first_goal_state(&goalState, &goalNum);
+
+ 
         char stringState[MAX_LINE_LENGTH] = ""; 
-        char stringGoal[MAX_LINE_LENGTH] = "";
+ 
 
         int heuristicValue = 0;
 
         int stringLen = sprint_state(stringState, MAX_LINE_LENGTH, &state);
-        sprint_state(stringGoal, MAX_LINE_LENGTH, &goalState);
+       
         
-        for(int i = 0; i < stringLen;i+=2){
-            if(stringGoal[i] == 'R'){
-                if(stringState[i] != 'R'){
-                    heuristicValue++;
-                }
+        for(int i = 0; i < goalIndex;i++){
+            if(stringState[goalVector[i]] != 'R'){
+                heuristicValue++;
             }
         }
 
+        
+        
         return heuristicValue;
     }
 
@@ -129,7 +128,7 @@ int heuristic(state_t state, int flagHeuristic){
 
 
 
-
+/*
 int search(stack<StateNode> path, unordered_set<state_t> visited, int bound, int flagHeuristic){
     StateNode node = path.top();
     
@@ -235,14 +234,14 @@ void IDA_Star(state_t startState, int flagHeuristic){
           
     }
     //std::cout << "Estados por bucket IDA*: " << visitedList.size()  << "\n";
-}
+}*/
 
-int a_Star(state_t startState, int flagHeuristic, int *nodesExpanded){
+int a_Star(state_t startState, int flagHeuristic, int *nodesExpanded, int goalVector[], int goalIndex, int showSteps){
     priority_queue<StateNode, vector<StateNode>, Comparator> fringe;
     unordered_set<state_t> visitedList;
 
     //starting fringe with start state
-    fringe.push(StateNode(startState, heuristic(startState, flagHeuristic), 0, ""));
+    fringe.push(StateNode(startState, heuristic(startState, flagHeuristic, goalVector, goalIndex), 0, ""));
 
     *nodesExpanded = 1;
 
@@ -274,8 +273,12 @@ int a_Star(state_t startState, int flagHeuristic, int *nodesExpanded){
         *nodesExpanded = *nodesExpanded + 1;
 
         if(is_goal(&state) == true) {
-            cout << "Passos: ";
-			cout << auxPath;
+            if(showSteps){
+                cout << "Passos: ";
+			    cout << auxPath;
+                cout << "\n";
+            }
+            
             return auxCost;
 		}			
 			
@@ -291,7 +294,7 @@ int a_Star(state_t startState, int flagHeuristic, int *nodesExpanded){
 			init_fwd_iter( &iter, &state );  // initialize the child iterator 
 			while( ( ruleid = next_ruleid( &iter ) ) >= 0 ) {
 				apply_fwd_rule( ruleid, &state, &child );
-				fringe.push(StateNode(child, heuristic(child, flagHeuristic), get_fwd_rule_cost(ruleid)+auxCost, auxPath+" "+get_fwd_rule_label(ruleid)));
+				fringe.push(StateNode(child, heuristic(child, flagHeuristic, goalVector, goalIndex), get_fwd_rule_cost(ruleid)+auxCost, auxPath+" "+get_fwd_rule_label(ruleid)));
 			}	
 		}      
     }
@@ -314,12 +317,18 @@ int main( int argc, char **argv )
   
 
     int flagHeuristic = 0;
+    int flagSteps = 0;
 
     state_t child;
 
     if(argc > 1){
-        if(strcmp(argv[1], "goalCount") == 0){
-            flagHeuristic = 1;
+        for(int i = 0; i < argc; i++){
+            if(strcmp(argv[i], "goalCount") == 0){
+                flagHeuristic = 1;
+            }
+            if(strcmp(argv[1], "showSteps") == 0){
+                flagSteps = 1;
+            }
         }
     }
 
@@ -362,6 +371,12 @@ int main( int argc, char **argv )
     string plusSign = "+";
     string starSign = "*";
 
+    
+    int goalVector[50];
+    int goalIndex = 0;
+
+    //generate initial state
+
     for(int i = 0;i < maxDim;i++){
         if(getline(file2, mapa)){
             flag = 0;
@@ -391,12 +406,18 @@ int main( int argc, char **argv )
                         }
                         if(mapa[x] == dot[0]){
                             startState = startState + "N ";
+                            goalVector[goalIndex] = ((i*maxDim) + x)*2;
+                            goalIndex++; 
                         }
                         if(mapa[x] == plusSign[0]){
                             startState = startState + "P ";
+                            goalVector[goalIndex] = ((i*maxDim) + x)*2;
+                            goalIndex++; 
                         }
                         if(mapa[x] == starSign[0]){
                             startState = startState + "R ";
+                            goalVector[goalIndex] = ((i*maxDim) + x)*2;
+                            goalIndex++; 
                         }
                     }
                 }else{
@@ -412,6 +433,7 @@ int main( int argc, char **argv )
     }
 
     
+
     const char * c = startState.c_str();
     
     
@@ -429,7 +451,7 @@ int main( int argc, char **argv )
    
     clock_t begin = clock();
 
-    int result = a_Star(state, flagHeuristic, &nodesExpanded);
+    int result = a_Star(state, flagHeuristic, &nodesExpanded, goalVector, goalIndex, flagSteps);
 
     clock_t end = clock();
 
