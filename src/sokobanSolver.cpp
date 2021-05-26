@@ -274,7 +274,7 @@ int a_Star(state_t startState, int flagHeuristic, int *nodesExpanded, int goalVe
 
         if(is_goal(&state) == true) {
             if(showSteps){
-                cout << "Passos: ";
+                cout << "Steps: ";
 			    cout << auxPath;
                 cout << "\n";
             }
@@ -458,10 +458,10 @@ int main( int argc, char **argv )
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
 
     if(result == -1){
-        cout << "Sem solução.\nNodos expandidos: " << nodesExpanded << "\nTempo decorrido: " << elapsed_secs << "\n\n";
+        cout << "Sem solução.\nExpanded nodes: " << nodesExpanded << "\nElapsed time: " << elapsed_secs << "\n\n";
     }
     else{
-        cout << "Solução encontrada!\nCusto: " << result << "\nNodos expandidos: " << nodesExpanded << "\nTempo decorrido: " << elapsed_secs << "\n\n";
+        cout << "Found solution!\nCost: " << result << "\nExpanded nodes: " << nodesExpanded << "\nElapsed time: " << elapsed_secs << "\n\n";
     }
 
           
