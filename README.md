@@ -1,6 +1,6 @@
-# Sokoban Solver using PSVN
+# Sokoban Planner using PSVN
 
-This Sokoban solver contains both a problem domain generator using Python to encode a Sokoban level to a PSVN file (problem description formalism) and its respective solver, written in C++.
+This Sokoban solver contains both a problem domain generator using Python to encode a Sokoban level to a PSVN file (problem description formalism) and its respective planner, written in C++.
 
 To use this solver, first you have to encode your Sokoban level in the "sokobanLevel" text file using the following characters:
 
