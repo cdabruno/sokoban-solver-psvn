@@ -1,8 +1,6 @@
-/* This program reads a state from stdin and prints out its successors.
-
-Copyright (C) 2013 by the PSVN Research Group, University of Alberta
+/* Sokoban Solver
+   Bruno Corrêa de Almeida, UFRGS, 2021 
 */
-
 
 #include <queue>
 #include <unordered_set>
