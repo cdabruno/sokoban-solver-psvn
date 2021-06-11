@@ -456,7 +456,7 @@ int main( int argc, char **argv )
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
 
     if(result == -1){
-        cout << "Sem solução.\nExpanded nodes: " << nodesExpanded << "\nElapsed time: " << elapsed_secs << "\n\n";
+        cout << "No solution found.\nExpanded nodes: " << nodesExpanded << "\nElapsed time: " << elapsed_secs << "\n\n";
     }
     else{
         cout << "Found solution!\nCost: " << result << "\nExpanded nodes: " << nodesExpanded << "\nElapsed time: " << elapsed_secs << "\n\n";
