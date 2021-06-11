@@ -4,6 +4,7 @@ This Sokoban solver contains both a problem domain generator using Python to enc
 
 To use this solver, first you have to encode your Sokoban level in the "sokobanLevel" text file using the following characters:
 
+```
 \@ - Player
 
 \$ - Box
@@ -15,7 +16,7 @@ To use this solver, first you have to encode your Sokoban level in the "sokobanL
 \* - Box on Goal Square
 
 \# - Wall
-
+```
 Then, you have to execute the "SokobanDomainGenerator.py" file. Both files are in the "src" folder.
 
 After that, open your terminal on the "src" folder and execute the following command: `make outputDomain.SokobanSolver`.
